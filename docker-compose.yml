@@ -2,8 +2,9 @@ version: '2'
 services:
   mediawiki:
     # MediaWiki
-    #### Access via http://host-ip:8080
-    image: synctree/mediawiki
+    #### Access via http://host-ip:8888
+    #image: synctree/mediawiki
+    image: simplyintricate/mediawiki
     logging:
       driver: syslog
       options:
@@ -15,9 +16,14 @@ services:
       - MEDIAWIKI_DB_PASSWORD=mediawiki
       - MEDIAWIKI_DB_NAME=mediawiki
     ports:
-      - "8080:8080/tcp"
+      - "8888:80/tcp"
+      - "8889:443/tcp"
     links:
       - mariadb
+    volumes:
+      - ./mediawiki/data/LocalSettings.php:/usr/share/nginx/html/LocalSettings.php:ro
+      #- <path>:/usr/share/nginx/html/images:ro
+      #- <path>:/tmp/extensions
     depends_on:
       - mariadb
 
@@ -26,7 +32,7 @@ services:
     logging:
       driver: syslog 
       options:
-        tag: "mediawiki"
+        tag: "mariadb"
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=mediawiki
